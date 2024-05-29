@@ -1,4 +1,4 @@
-# v0.3.1
+# v0.4.0
 
 import tkinter
 import tkinter.ttk as ttk
@@ -9,6 +9,7 @@ root.resizable(False, False)
 
 # --- Option ---
 view = 6  # max views
+autoswitch = False  # auto scene switch
 
 # main
 class Application(tkinter.Frame):
@@ -30,13 +31,15 @@ class Application(tkinter.Frame):
           else:
             name_list.append(combobox[l].get())
         f.writelines('\n'.join(name_list))
-        f.writelines('\n'.join('\n'))
+        if autoswitch:
+          f.writelines(f'\n{focusnum.get()}')
+        else:
+          f.writelines(f'\n-1')
 
     def Clear():
       path = f'{os.path.dirname(os.path.realpath(__file__))}\\data\\names.txt'
       with open(path, 'w') as f:
-        for l in range(len(combobox)):
-          f.writelines('\n'.join('\n'))
+        f.writelines('\n'*len(combobox)+'-1')
 
     # get all names
     path = f'{os.path.dirname(os.path.realpath(__file__))}\\data\\allnames.txt'
