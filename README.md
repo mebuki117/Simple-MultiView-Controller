@@ -2,12 +2,13 @@
 OBSでTwitch配信をミラーするためのコントローラー。
 
 ## 使い方
-1. OBSで、`Player N`という名前の、ブラウザソースを作成
-2. OBSのスクリプトに、`obs_controller.py`を追加
-3. `\data\allnames.txt`に、Twitch IDを行ごとに追加
-4. `main_controller.pyw`を起動
-5. プレイヤーのコンボボックスから、Twitch IDを選択
-6. `Refresh`をクリック
+1. autoswitchを有効にする場合は、OBSで`Normal`と、`Focus`という名前のシーンを作成
+2. 作成したシーンに、`Player N`という名前のブラウザソースを作成（`N`は、1から順に必要数作成）
+3. OBSのスクリプトに、`obs_controller.py`を追加
+4. `\data\allnames.txt`に、Twitch IDを行ごとに追加
+5. `main_controller.pyw`を起動
+6. プレイヤーのコンボボックスから、Twitch IDを選択
+7. `Refresh`をクリック
 
 ### フォーカス
 プレイヤーの右にある、ラジオボタンでフォーカスを有効にできる。有効にしたプレイヤーは、`Player 1`に表示される。  
@@ -17,7 +18,16 @@ OBSでTwitch配信をミラーするためのコントローラー。
 `Clear`をクリックし、再度`Refresh`をクリックする。
 
 ## 設定
-必要に応じて、コントローラーをテキストエディタで開き、設定を変更する。
+各ファイルをテキストエディタで開いて編集する。
 
+### main_controller
+- `view` 表示する配信の最大数
+- `autoswitch` 自動的にシーンを切り替える
+
+### obs_controller
+- `browser_format` ブラウザソースの識別子
+- `focus_scene_name` フォーカスシーン名
+- `normal_scene_name` ノーマルシーン名
+ 
 ## デバッグ
 問題がある場合は、`main_controller`の拡張子を、`.py`に変える。
