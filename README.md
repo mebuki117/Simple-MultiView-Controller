@@ -2,12 +2,16 @@
 OBSでTwitch配信をミラーするためのコントローラー。
 
 ## 使い方
-1. OBSで、`player N`という名前の、ブラウザソースを作成
+1. OBSで、`Player N`という名前の、ブラウザソースを作成
 2. OBSのスクリプトに、`obs_controller.py`を追加
 3. `\data\allnames.txt`に、Twitch IDを行ごとに追加
 4. `main_controller.pyw`を起動
 5. プレイヤーのコンボボックスから、Twitch IDを選択
 6. `Refresh`をクリック
+
+### フォーカス
+プレイヤーの右にある、ラジオボタンでフォーカスを有効にできる。有効にしたプレイヤーは、`Player 1`に表示される。  
+一番下のラジオボタンで無効化。
 
 ### エラーが起きた場合
 `Clear`をクリックし、再度`Refresh`をクリックする。
