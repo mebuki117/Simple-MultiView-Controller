@@ -1,4 +1,4 @@
-# v0.4.0
+# v0.5.0
 
 import tkinter
 import tkinter.ttk as ttk
@@ -9,7 +9,7 @@ root.resizable(False, False)
 
 # --- Option ---
 view = 6  # max views
-autoswitch = False  # auto scene switch
+autoswitch = True  # auto scene switch
 
 # main
 class Application(tkinter.Frame):
@@ -26,10 +26,9 @@ class Application(tkinter.Frame):
       path = f'{os.path.dirname(os.path.realpath(__file__))}\\data\\names.txt'
       with open(path, 'w') as f:
         for l in range(len(combobox)):
-          if focusnum.get() == l:
-            name_list.insert(0, combobox[l].get())
-          else:
-            name_list.append(combobox[l].get())
+          name_list.append(combobox[l].get())
+        if focusnum.get() < len(combobox):
+          name_list[0], name_list[focusnum.get()] = name_list[focusnum.get()], name_list[0]
         f.writelines('\n'.join(name_list))
         if autoswitch:
           f.writelines(f'\n{focusnum.get()}')
