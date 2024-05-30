@@ -26,8 +26,8 @@ OBSでTwitch配信をミラーするためのコントローラー。
 
 ### obs_controller
 - `browser_format` ブラウザソースの識別子
-- `focus_scene_name` フォーカスシーン名
 - `normal_scene_name` ノーマルシーン名
+- `focus_scene_name` フォーカスシーン名
  
 ## デバッグ
 問題がある場合は、`main_controller`の拡張子を、`.py`に変える。
