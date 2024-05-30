@@ -1,4 +1,4 @@
-# v0.5.0
+# v0.6.0
 
 import tkinter
 import tkinter.ttk as ttk
@@ -7,9 +7,13 @@ import os
 root = tkinter.Tk()
 root.resizable(False, False)
 
+path_names = f'{os.path.dirname(os.path.realpath(__file__))}\\data\\names.txt'
+path_allnames = f'{os.path.dirname(os.path.realpath(__file__))}\\data\\allnames.txt'
+path_dir = f'{os.path.dirname(os.path.realpath(__file__))}\\data'
+
 # --- Option ---
 view = 6  # max views
-autoswitch = True  # auto scene switch
+autoswitch = False  # auto scene switch
 
 # main
 class Application(tkinter.Frame):
@@ -21,10 +25,22 @@ class Application(tkinter.Frame):
     self.master.geometry(f'192x{view*32+42}')
 
     # defs
+    def getallnames(path, path_dir):
+      if os.path.isdir(path_dir) == False:
+        os.makedirs(path_dir)
+      try:
+        with open(path, 'x') as f:
+          f.write('')
+      except FileExistsError:
+        pass
+      with open(path) as f:
+        name = f.read().splitlines()
+        name.insert(0, '')
+      return name
+
     def Refresh():
       name_list = []
-      path = f'{os.path.dirname(os.path.realpath(__file__))}\\data\\names.txt'
-      with open(path, 'w') as f:
+      with open(path_names, 'w') as f:
         for l in range(len(combobox)):
           name_list.append(combobox[l].get())
         if focusnum.get() < len(combobox):
@@ -34,26 +50,16 @@ class Application(tkinter.Frame):
           f.writelines(f'\n{focusnum.get()}')
         else:
           f.writelines(f'\n-1')
+      name = getallnames(path_allnames, path_dir)
+      for l in range(view):
+        combobox[l].configure(value=name)
 
     def Clear():
-      path = f'{os.path.dirname(os.path.realpath(__file__))}\\data\\names.txt'
-      with open(path, 'w') as f:
+      with open(path_names, 'w') as f:
         f.writelines('\n'*len(combobox)+'-1')
 
     # get all names
-    path = f'{os.path.dirname(os.path.realpath(__file__))}\\data\\allnames.txt'
-    path_dir = f'{os.path.dirname(os.path.realpath(__file__))}\\data'
-
-    if os.path.isdir(path_dir) == False:
-      os.makedirs(path_dir)
-    try:
-      with open(path, 'x') as f:
-        f.write('')
-    except FileExistsError:
-      pass
-    with open(path) as f:
-      name = f.read().splitlines()
-      name.insert(0, '')
+    name = getallnames(path_allnames, path_dir)
 
     # set labels and comboboxes
     combobox = []
