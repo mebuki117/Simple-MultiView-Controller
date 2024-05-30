@@ -1,7 +1,7 @@
 import obspython as S
 import os
 
-version = '0.4.0'
+version = '0.4.1'
 
 # --- Option ---
 browser_format = 'Player '  # brower source format
@@ -47,4 +47,4 @@ def script_description():
 
 def script_update(settings):
   S.timer_remove(execute)
-  S.timer_add(execute, 100)
+  S.timer_add(execute, 1000)
