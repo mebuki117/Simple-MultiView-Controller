@@ -5,8 +5,8 @@ version = '0.4.1'
 
 # --- Option ---
 browser_format = 'Player '  # brower source format
-focus_scene_name = 'Focus'
 normal_scene_name = 'Normal'
+focus_scene_name = 'Focus'
 
 # defs
 def updateURL(): 
