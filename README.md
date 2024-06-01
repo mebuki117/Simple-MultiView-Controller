@@ -26,6 +26,7 @@ OBSでTwitch配信をミラーするためのコントローラー。
 ### main_controller
 - `view` 表示する配信の最大数
 - `autoswitch` 自動的にシーンを切り替える
+- `pacecatcher` [PaceCatcherBot](https://github.com/mebuki117/PaceCatcherBot)と併用する
 
 ### obs_controller
 - `browser_format` ブラウザソースの識別子
