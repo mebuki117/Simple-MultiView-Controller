@@ -1,4 +1,4 @@
-# v0.7.1
+# v0.8.0
 
 import tkinter
 import tkinter.ttk as ttk
@@ -10,17 +10,17 @@ root.resizable(False, False)
 path_current = f'{os.path.dirname(os.path.realpath(__file__))}'
 path_names = f'{path_current}\\data\\names.txt'
 path_allnames = f'{path_current}\\data\\allnames.txt'
-path_eval = f'{path_current}\\data\\evaluation.txt'
+path_pr = f'{path_current}\\data\\priority.txt'
 path_temp = f'{path_current}\\data\\temp.txt'
 path_dir = f'{path_current}\\data'
 
 # --- Options ---
 view = 6  # max views
-autoswitch = True  # auto scene switch
+autoSwitch = True  # auto scene switch
 
 # --- Advanced Options ---
-pacecatcher = False  # ONLY TRUE IF USE PACECATCHER
-switcheval = 4  # run evaluation value that automatically switches the scene. Evaluation: -1=NoPlayer, 0= Nothing, 1=FS, 3=SS, 4=B, 5=E, 6=SSPB, 7=EE, 8=BPB, 9=EPB, 10=EEPB
+usePr = True  # ONLY TRUE IF USE PRIORITY
+switchPr = 4  # priority that automatically switches the scene. priorities: -1=nodata, 0=nothing, above 1=any
 
 # main
 class Application(tkinter.Frame):
@@ -29,7 +29,7 @@ class Application(tkinter.Frame):
 
     # set
     self.master.title('Simple MultiView Controller')
-    self.master.geometry(f'192x{view*32+42}')
+    self.master.geometry(f'234x{view*32+42}')
 
     # defs
     def getallnames(path, path_dir):
@@ -50,24 +50,26 @@ class Application(tkinter.Frame):
       with open(path_names) as f:
         name = f.read().splitlines()
       with open(path_names, 'w') as f:
-        with open(path_eval) as e:
-          eval = e.read().splitlines()
-        with open(path_eval, 'w') as e:
+        with open(path_pr) as e:
+          pr = e.read().splitlines()
+        with open(path_pr, 'w') as e:
           for l in range(len(combobox)):
             name_list.append(combobox[l].get())
-            if pacecatcher:
+            if usePr:
               if combobox[l].get() == '':
-                eval[l] = '-1'
+                pr[l] = '-1'
+                radio[l].configure(text='-1')
               elif combobox[l].get() not in name:
-                eval[l] = '0'
+                pr[l] = '0'
+                radio[l].configure(text='0')
           if focusnum.get() < len(combobox):
             name_list[0], name_list[focusnum.get()] = name_list[focusnum.get()], name_list[0]
-            if pacecatcher:
-              eval[0], eval[focusnum.get()] = eval[focusnum.get()], eval[0]
+            if usePr:
+              pr[0], pr[focusnum.get()] = pr[focusnum.get()], pr[0]
           f.writelines('\n'.join(name_list))
-          if pacecatcher:
-            e.writelines('\n'.join(eval))
-          if autoswitch:
+          if usePr:
+            e.writelines('\n'.join(pr))
+          if autoSwitch:
             f.writelines(f'\n{focusnum.get()}')
           else:
             f.writelines(f'\n-1')
@@ -92,49 +94,51 @@ class Application(tkinter.Frame):
         temp = f.read().splitlines()
         if len(temp):
           if temp[0] not in name:
-            try:
-              with open(path_eval, 'x') as f:
-                f.write('0\n0\n0\n0\n0\n0')
-            except FileExistsError:
-              pass
-            with open(path_eval) as e:
-              eval = e.read().splitlines()
-            eval_min = int(min(eval))
-            if int(eval_min) <= int(temp[1]):
+            with open(path_pr) as e:
+              pr = e.read().splitlines()
+            pr_min = int(min(pr))
+            if int(pr_min) <= int(temp[1]):
               for l in range(view):
-                if int(eval.index(eval_min)) == l:
+                if int(pr.index(str(pr_min))) == l:
                   name[l] = temp[0]
                   combobox[l].set(temp[0])
+                  radio[l].configure(text=temp[1])
                   break
-              eval[eval.index(eval_min)] = f'{temp[1]}'
-              with open(path_eval, 'w') as f:
-                f.writelines('\n'.join(eval))
+              pr[pr.index(str(pr_min))] = f'{temp[1]}'
+              if switchPr:
+                if switchPr <= int(max(pr)):
+                  focusnum.set(pr.index(str(max(pr))))
+                else:
+                  focusnum.set(view)
+              with open(path_pr, 'w') as f:
+                f.writelines('\n'.join(pr))
               with open(path_temp, 'w') as f:
                 f.write('')
               with open(path_names, 'w') as f:
                 f.writelines('\n'.join(name))
-                if autoswitch:
+                if autoSwitch:
                   f.writelines(f'\n{focusnum.get()}')
                 else:
                   f.writelines(f'\n-1')
               with open(path_temp, 'w') as f:
                 f.write('')
-      app.after(5000, TempLoad)
+      app.after(500, TempLoad)
 
-    def EvalSwitch():
-      with open(path_eval) as f:
-        eval = f.read().splitlines()
-      with open(path_names) as f:
-        name = f.read().splitlines()
-      if switcheval <= int(max(eval)):
-        focusnum.set(eval.index(max(eval)))
-        name[len(name)-1] = max(eval)
-      else:
-        focusnum.set(view)
-        name[len(name)-1] = str(view)
-      with open(path_names, 'w') as f:
-        f.writelines('\n'.join(name))
-      app.after(5000, EvalSwitch)
+    def PrReset():
+      with open(path_pr) as f:
+        pr = f.read().splitlines()
+        if var.get() != view:
+          if combobox[var.get()].get() == '':
+            pr[var.get()] = '-1'
+            radio[var.get()].configure(text='-1')
+            var.set(view)
+          else:
+            pr[var.get()] = '0'
+            radio[var.get()].configure(text='0')
+            var.set(view)
+        with open(path_pr, 'w') as f:
+          f.writelines('\n'.join(pr))
+      app.after(500, PrReset)
 
     # get all names
     name = getallnames(path_allnames, path_dir)
@@ -142,7 +146,7 @@ class Application(tkinter.Frame):
     # set labels and comboboxes
     combobox = []
     for l in range(view):
-      label = tkinter.Label(root, text=f'Player {l+1}')
+      label = ttk.Label(root, text=f'Player {l+1}')
       label.place(x=8, y=(l)*32+8)
       combobox.append(ttk.Combobox(root, value=name, state='readonly', width=12))
       combobox[l].place(x=64, y=(l)*32+8)
@@ -151,20 +155,36 @@ class Application(tkinter.Frame):
     focusnum = tkinter.IntVar()
     focusnum.set(view)
     for l in range (view+1):
-      radio = tkinter.Radiobutton(root, value=l, variable=focusnum)
-      radio.place(x=164, y=(l)*32+8)
+      radio = ttk.Radiobutton(root, value=l, variable=focusnum)
+      radio.place(x=206, y=(l)*32+7)
     
     # set buttons
-    button = tkinter.Button(root,text="Refresh",command=Refresh,width=12)
-    button.place(x=64, y=(view)*32+8)
+    radio = []
+    var = tkinter.IntVar()
+    var.set(view)
+    try:
+      with open(path_pr, 'x') as f:
+        f.write('-1\n'*(view-1)+'-1')
+    except FileExistsError:
+      pass
+    with open(path_pr) as f:
+      pr = f.read().splitlines()
+    for l in range(view):
+      radio.append(ttk.Radiobutton(root, value=l, text=pr[l], variable=var))
+      radio[l].place(x=170, y=(l)*32+7)
+    radio.append(ttk.Radiobutton(root, value=l+1, variable=var))
+    radio[l+1].place(x=170, y=(l+1)*32+7)
 
-    button = tkinter.Button(root,text="Clear",command=Clear, width=5)
-    button.place(x=8, y=(view)*32+8)
+    button_other = ttk.Button(root, text="Refresh", command=Refresh, width=12)
+    button_other.place(x=62, y=(view)*32+7)
+
+    button_other = ttk.Button(root, text="Clear", command=Clear, width=5)
+    button_other.place(x=8, y=(view)*32+7)
     
     # set after
-    if pacecatcher:
-      self.after(5000, TempLoad)
-      self.after(5000, EvalSwitch)
+    if usePr:
+      self.after(500, TempLoad)
+      self.after(500, PrReset)
 
 app = Application(master = root)
 app.mainloop()
