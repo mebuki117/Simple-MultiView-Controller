@@ -1,4 +1,4 @@
-# v0.7.0
+# v0.7.1
 
 import tkinter
 import tkinter.ttk as ttk
@@ -18,8 +18,9 @@ path_dir = f'{path_current}\\data'
 view = 6  # max views
 autoswitch = True  # auto scene switch
 
-# --- Advanced Option ---
+# --- Advanced Options ---
 pacecatcher = False  # ONLY TRUE IF USE PACECATCHER
+switcheval = 4  # run evaluation value that automatically switches the scene. Evaluation: -1=NoPlayer, 0= Nothing, 1=FS, 3=SS, 4=B, 5=E, 6=SSPB, 7=EE, 8=BPB, 9=EPB, 10=EEPB
 
 # main
 class Application(tkinter.Frame):
@@ -125,8 +126,7 @@ class Application(tkinter.Frame):
         eval = f.read().splitlines()
       with open(path_names) as f:
         name = f.read().splitlines()
-      # evaluation: -1=NoPlayer, 0= Nothing, 1=FS, 3=SS, 4=B, 5=E, 6=SSPB, 7=EE, 8=BPB, 9=EPB, 10=EEPB
-      if 4 <= int(max(eval)):
+      if switcheval <= int(max(eval)):
         focusnum.set(eval.index(max(eval)))
         name[len(name)-1] = max(eval)
       else:
@@ -161,10 +161,10 @@ class Application(tkinter.Frame):
     button = tkinter.Button(root,text="Clear",command=Clear, width=5)
     button.place(x=8, y=(view)*32+8)
     
+    # set after
     if pacecatcher:
       self.after(5000, TempLoad)
       self.after(5000, EvalSwitch)
-
 
 app = Application(master = root)
 app.mainloop()
