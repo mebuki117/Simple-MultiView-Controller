@@ -175,7 +175,7 @@ class Application(tkinter.Frame):
     radio.append(ttk.Radiobutton(root, value=l+1, variable=var))
     radio[l+1].place(x=170, y=(l+1)*32+7)
 
-    button_other = ttk.Button(root, text="Refresh", command=Refresh, width=12)
+    button_other = ttk.Button(root, text="Refresh", command=Refresh, width=14)
     button_other.place(x=62, y=(view)*32+7)
 
     button_other = ttk.Button(root, text="Clear", command=Clear, width=5)
