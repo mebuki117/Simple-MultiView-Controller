@@ -20,7 +20,7 @@ autoSwitch = True  # auto scene switch
 
 # --- Advanced Options ---
 usePr = False  # ONLY TRUE IF USE PRIORITY
-switchPr = 4  # priority that automatically switches the scene. priorities: -1=nodata, 0=nothing, above 1=any
+switchPr = 4  # priority that automatically switches the scene. default priorities: -1=nodata, 0=no priority
 
 # main
 class Application(tkinter.Frame):
@@ -52,6 +52,7 @@ class Application(tkinter.Frame):
       with open(path_names, 'w') as f:
         with open(path_pr) as e:
           pr = e.read().splitlines()
+          pr_int = [int(s) for s in pr]
         with open(path_pr, 'w') as e:
           for l in range(len(combobox)):
             name_list.append(combobox[l].get())
@@ -59,13 +60,11 @@ class Application(tkinter.Frame):
               if combobox[l].get() == '':
                 pr[l] = '-1'
                 radio[l].configure(text='-1')
-              elif combobox[l].get() not in name:
+              elif combobox[l].get() in name_list and pr_int[l] == -1:
                 pr[l] = '0'
                 radio[l].configure(text='0')
           if focusnum.get() < len(combobox):
             name_list[0], name_list[focusnum.get()] = name_list[focusnum.get()], name_list[0]
-            if usePr:
-              pr[0], pr[focusnum.get()] = pr[focusnum.get()], pr[0]
           f.writelines('\n'.join(name_list))
           if usePr:
             e.writelines('\n'.join(pr))
@@ -93,38 +92,52 @@ class Application(tkinter.Frame):
       with open(path_temp) as f:
         temp = f.read().splitlines()
         if len(temp):
-          if temp[0] not in name:
-            with open(path_pr) as e:
-              pr = e.read().splitlines()
-              pr_int = [int(s) for s in pr]
+          with open(path_pr) as e:
+            pr = e.read().splitlines()
+            pr_int = [int(s) for s in pr]
             pr_min = min(pr_int)
-            if int(pr_min) <= int(temp[1]):
-              for l in range(view):
-                if int(pr.index(str(pr_min))) == l:
-                  name[l] = temp[0]
-                  combobox[l].set(temp[0])
-                  radio[l].configure(text=temp[1])
-                  break
-              pr[pr.index(str(pr_min))] = f'{temp[1]}'
-              pr_int[pr.index(str(pr_min))] = int(temp[1])
-              if switchPr:
-                if switchPr <= max(pr_int):
-                  focusnum.set(pr.index(str(max(pr_int))))
-                else:
-                  focusnum.set(view)
-              with open(path_pr, 'w') as f:
-                f.writelines('\n'.join(pr))
-              with open(path_temp, 'w') as f:
-                f.write('')
-              with open(path_names, 'w') as f:
-                f.writelines('\n'.join(name))
-                if autoSwitch:
-                  f.writelines(f'\n{focusnum.get()}')
-                else:
-                  f.writelines(f'\n-1')
-              with open(path_temp, 'w') as f:
-                f.write('')
-      app.after(500, TempLoad)
+          if int(pr_min) <= int(temp[1]):
+            combobox_list = []
+            for l in range(view):
+              combobox_list.append(combobox[l].get())
+            if temp[0] in combobox_list:
+              d = combobox_list.index(temp[0])
+              name[d] = temp[0]
+              radio[d].configure(text=temp[1])
+              pr[d] = f'{temp[1]}'
+              pr_int[d] = int(temp[1])
+              if switchPr <= max(pr_int) <= int(temp[1]):
+                focusnum.set(d)
+              elif switchPr <= max(pr_int):
+                focusnum.set(pr.index(str(max(pr_int))))
+              else:
+                focusnum.set(view)
+            else:
+              d = pr.index(str(pr_min))
+              name[d] = temp[0]
+              combobox[d].set(temp[0])
+              radio[d].configure(text=temp[1])
+              pr[d] = f'{temp[1]}'
+              if switchPr <= int(temp[1]):
+                focusnum.set(d)
+              elif switchPr <= max(pr_int):
+                focusnum.set(pr.index(str(max(pr_int))))
+              else:
+                focusnum.set(view)
+          with open(path_pr, 'w') as f:
+            f.writelines('\n'.join(pr))
+          with open(path_temp, 'w') as f:
+            f.write('')
+          with open(path_names, 'w') as f:
+            f.writelines('\n'.join(name))
+            if autoSwitch:
+              f.writelines(f'\n{focusnum.get()}')
+            else:
+              f.writelines(f'\n-1')
+          with open(path_temp, 'w') as f:
+            f.write('')
+          app.after(1000, Refresh)
+      app.after(1000, TempLoad)
 
     def PrReset():
       with open(path_pr) as f:
@@ -140,7 +153,7 @@ class Application(tkinter.Frame):
             var.set(view)
         with open(path_pr, 'w') as f:
           f.writelines('\n'.join(pr))
-      app.after(500, PrReset)
+      app.after(100, PrReset)
 
     # get all names
     name = getallnames(path_allnames, path_dir)
