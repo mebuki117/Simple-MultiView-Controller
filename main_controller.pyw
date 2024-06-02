@@ -19,7 +19,7 @@ view = 6  # max views
 autoSwitch = True  # auto scene switch
 
 # --- Advanced Options ---
-usePr = True  # ONLY TRUE IF USE PRIORITY
+usePr = False  # ONLY TRUE IF USE PRIORITY
 switchPr = 4  # priority that automatically switches the scene. priorities: -1=nodata, 0=nothing, above 1=any
 
 # main
@@ -98,7 +98,6 @@ class Application(tkinter.Frame):
               pr = e.read().splitlines()
               pr_int = [int(s) for s in pr]
             pr_min = min(pr_int)
-            print(pr_min)
             if int(pr_min) <= int(temp[1]):
               for l in range(view):
                 if int(pr.index(str(pr_min))) == l:
@@ -109,7 +108,6 @@ class Application(tkinter.Frame):
               pr[pr.index(str(pr_min))] = f'{temp[1]}'
               pr_int[pr.index(str(pr_min))] = int(temp[1])
               if switchPr:
-                print(max(pr_int))
                 if switchPr <= max(pr_int):
                   focusnum.set(pr.index(str(max(pr_int))))
                 else:
