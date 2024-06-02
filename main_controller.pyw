@@ -1,4 +1,4 @@
-# v0.8.0
+# v0.8.1
 
 import tkinter
 import tkinter.ttk as ttk
@@ -19,7 +19,7 @@ view = 6  # max views
 autoSwitch = True  # auto scene switch
 
 # --- Advanced Options ---
-usePr = False  # ONLY TRUE IF USE PRIORITY
+usePr = True  # ONLY TRUE IF USE PRIORITY
 switchPr = 4  # priority that automatically switches the scene. priorities: -1=nodata, 0=nothing, above 1=any
 
 # main
@@ -96,7 +96,9 @@ class Application(tkinter.Frame):
           if temp[0] not in name:
             with open(path_pr) as e:
               pr = e.read().splitlines()
-            pr_min = int(min(pr))
+              pr_int = [int(s) for s in pr]
+            pr_min = min(pr_int)
+            print(pr_min)
             if int(pr_min) <= int(temp[1]):
               for l in range(view):
                 if int(pr.index(str(pr_min))) == l:
@@ -105,9 +107,11 @@ class Application(tkinter.Frame):
                   radio[l].configure(text=temp[1])
                   break
               pr[pr.index(str(pr_min))] = f'{temp[1]}'
+              pr_int[pr.index(str(pr_min))] = int(temp[1])
               if switchPr:
-                if switchPr <= int(max(pr)):
-                  focusnum.set(pr.index(str(max(pr))))
+                print(max(pr_int))
+                if switchPr <= max(pr_int):
+                  focusnum.set(pr.index(str(max(pr_int))))
                 else:
                   focusnum.set(view)
               with open(path_pr, 'w') as f:
