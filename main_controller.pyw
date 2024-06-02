@@ -19,7 +19,7 @@ view = 6  # max views
 autoSwitch = True  # auto scene switch
 
 # --- Advanced Options ---
-usePr = False  # ONLY TRUE IF USE PRIORITY
+usePr = True  # ONLY TRUE IF USE PRIORITY
 switchPr = 4  # priority that automatically switches the scene. default priorities: -1=nodata, 0=no priority
 
 # main
@@ -91,6 +91,10 @@ class Application(tkinter.Frame):
         pass
       with open(path_temp) as f:
         temp = f.read().splitlines()
+        if (len(temp)) != 2:
+          temp = ''
+          with open(path_temp, 'w') as f:
+            f.write('')
         if len(temp):
           with open(path_pr) as e:
             pr = e.read().splitlines()
