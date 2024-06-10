@@ -1,4 +1,4 @@
-# v0.8.2
+# v0.8.3
 
 import tkinter
 import tkinter.ttk as ttk
@@ -19,7 +19,7 @@ view = 6  # max views
 autoSwitch = True  # auto scene switch
 
 # --- Advanced Options ---
-usePr = False  # ONLY TRUE IF USE PRIORITY
+usePr = True  # ONLY TRUE IF USE PRIORITY
 switchPr = 4  # priority that automatically switches the scene. default priorities: -1=nodata, 0=no priority
 
 # main
@@ -36,24 +36,24 @@ class Application(tkinter.Frame):
       if os.path.isdir(path_dir) == False:
         os.makedirs(path_dir)
       try:
-        with open(path, 'x') as f:
+        with open(path, 'x', encoding='utf-8') as f:
           f.write('')
       except FileExistsError:
         pass
-      with open(path) as f:
+      with open(path, encoding='utf-8') as f:
         name = f.read().splitlines()
         name.insert(0, '')
       return name
 
     def Refresh():
       name_list = []
-      with open(path_names) as f:
+      with open(path_names, encoding='utf-8') as f:
         name = f.read().splitlines()
-      with open(path_names, 'w') as f:
-        with open(path_pr) as e:
+      with open(path_names, 'w', encoding='utf-8') as f:
+        with open(path_pr, encoding='utf-8') as e:
           pr = e.read().splitlines()
           pr_int = [int(s) for s in pr]
-        with open(path_pr, 'w') as e:
+        with open(path_pr, 'w', encoding='utf-8') as e:
           for l in range(len(combobox)):
             name_list.append(combobox[l].get())
             if usePr:
@@ -77,26 +77,26 @@ class Application(tkinter.Frame):
         combobox[l].configure(value=name)
 
     def Clear():
-      with open(path_names, 'w') as f:
+      with open(path_names, 'w', encoding='utf-8') as f:
         f.writelines('\n'*len(combobox)+'-1')
 
     def TempLoad():
-      with open(path_names) as f:
+      with open(path_names, encoding='utf-8') as f:
         name = f.read().splitlines()
         dummy = name.pop()
       try:
-        with open(path_temp, 'x') as f:
+        with open(path_temp, 'x', encoding='utf-8') as f:
           f.write('')
       except FileExistsError:
         pass
-      with open(path_temp) as f:
+      with open(path_temp, encoding='utf-8') as f:
         temp = f.read().splitlines()
         if (len(temp)) != 2:
           temp = ''
-          with open(path_temp, 'w') as f:
+          with open(path_temp, 'w', encoding='utf-8') as f:
             f.write('')
         if len(temp):
-          with open(path_pr) as e:
+          with open(path_pr, encoding='utf-8') as e:
             pr = e.read().splitlines()
             pr_int = [int(s) for s in pr]
             pr_min = min(pr_int)
@@ -128,23 +128,23 @@ class Application(tkinter.Frame):
                 focusnum.set(pr.index(str(max(pr_int))))
               else:
                 focusnum.set(view)
-          with open(path_pr, 'w') as f:
+          with open(path_pr, 'w', encoding='utf-8') as f:
             f.writelines('\n'.join(pr))
-          with open(path_temp, 'w') as f:
+          with open(path_temp, 'w', encoding='utf-8') as f:
             f.write('')
-          with open(path_names, 'w') as f:
+          with open(path_names, 'w', encoding='utf-8') as f:
             f.writelines('\n'.join(name))
             if autoSwitch:
               f.writelines(f'\n{focusnum.get()}')
             else:
               f.writelines(f'\n-1')
-          with open(path_temp, 'w') as f:
+          with open(path_temp, 'w', encoding='utf-8') as f:
             f.write('')
           app.after(1000, Refresh)
       app.after(1000, TempLoad)
 
     def PrReset():
-      with open(path_pr) as f:
+      with open(path_pr, encoding='utf-8') as f:
         pr = f.read().splitlines()
         if var.get() != view:
           if combobox[var.get()].get() == '':
@@ -155,7 +155,7 @@ class Application(tkinter.Frame):
             pr[var.get()] = '0'
             radio[var.get()].configure(text='0')
             var.set(view)
-        with open(path_pr, 'w') as f:
+        with open(path_pr, 'w', encoding='utf-8') as f:
           f.writelines('\n'.join(pr))
       app.after(100, PrReset)
 
@@ -182,11 +182,11 @@ class Application(tkinter.Frame):
     var = tkinter.IntVar()
     var.set(view)
     try:
-      with open(path_pr, 'x') as f:
+      with open(path_pr, 'x', encoding='utf-8') as f:
         f.write('-1\n'*(view-1)+'-1')
     except FileExistsError:
       pass
-    with open(path_pr) as f:
+    with open(path_pr, encoding='utf-8') as f:
       pr = f.read().splitlines()
     for l in range(view):
       radio.append(ttk.Radiobutton(root, value=l, text=pr[l], variable=var))
@@ -194,10 +194,10 @@ class Application(tkinter.Frame):
     radio.append(ttk.Radiobutton(root, value=l+1, variable=var))
     radio[l+1].place(x=170, y=(l+1)*32+7)
 
-    button_other = ttk.Button(root, text="Refresh", command=Refresh, width=14)
+    button_other = ttk.Button(root, text='Refresh', command=Refresh, width=14)
     button_other.place(x=62, y=(view)*32+7)
 
-    button_other = ttk.Button(root, text="Clear", command=Clear, width=5)
+    button_other = ttk.Button(root, text='Clear', command=Clear, width=5)
     button_other.place(x=8, y=(view)*32+7)
     
     # set after
