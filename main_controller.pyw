@@ -1,4 +1,4 @@
-# v0.9.0 pre2
+# v0.9.0 pre3
 
 import tkinter
 import tkinter.ttk as ttk
@@ -21,7 +21,7 @@ view = 6  # max views
 autoSwitch = True  # auto scene switch
 
 # --- Advanced Options ---
-usePr = True  # ONLY TRUE IF USE PRIORITY
+usePr = False  # ONLY TRUE IF USE PRIORITY
 switchPr = 4  # priority that automatically switches the scene. default priorities: -1=nodata, 0=no priority
 usePaceManAPI = False  # [beta feature] automatically reset the priority using PaceManAPI. for PaceCatcherBot (usePr must be true)
 
@@ -70,26 +70,6 @@ class Application(tkinter.Frame):
             name_list[0], name_list[focusnum.get()] = name_list[focusnum.get()], name_list[0]
           f.writelines('\n'.join(name_list))
           if usePr:
-            if usePaceManAPI:
-              nickname_list = []
-              url = requests.get('https://paceman.gg/api/ars/liveruns')
-              data = json.loads(url.text)
-              for l in range(len(data)):
-                nickname_list.append(data[l]['nickname'])
-              print(f'nickname_list: {nickname_list}')
-              combobox_list = []
-              for l in range(view):
-                combobox_list.append(combobox[l].get())
-              for l in range(len(combobox_list)):
-                if combobox_list[l] not in nickname_list:
-                  if pr[l] != '-1':
-                    pr[l] = '0'
-                    pr_int[l] = 0
-                    radio[l].configure(text='0')
-                    if switchPr <= max(pr_int):
-                      focusnum.set(pr.index(str(max(pr_int))))
-                    elif switchPr > max(pr_int):
-                      focusnum.set(view)
             e.writelines('\n'.join(pr))
           if autoSwitch:
             f.writelines(f'\n{focusnum.get()}')
@@ -143,14 +123,35 @@ class Application(tkinter.Frame):
               d = pr.index(str(pr_min))
               name[d] = temp[0]
               combobox[d].set(temp[0])
+              combobox_list[d] = temp[0]
               radio[d].configure(text=temp[1])
               pr[d] = f'{temp[1]}'
+              pr_int[d] = int(temp[1])
               if switchPr <= int(temp[1]):
                 focusnum.set(d)
               elif switchPr <= max(pr_int):
                 focusnum.set(pr.index(str(max(pr_int))))
               else:
                 focusnum.set(view)
+          if usePr:
+            if usePaceManAPI:
+              nickname_list = []
+              url = requests.get('https://paceman.gg/api/ars/liveruns')
+              data = json.loads(url.text)
+              for l in range(len(data)):
+                nickname_list.append(data[l]['nickname'])
+              print(f'nickname_list: {nickname_list}')
+              for l in range(len(combobox_list)):
+                if combobox_list[l] not in nickname_list:
+                  print(f'not in nickname list: {combobox_list[l]}')
+                  if pr[l] != '-1':
+                    pr[l] = '0'
+                    pr_int[l] = 0
+                    radio[l].configure(text='0')
+                    if switchPr <= max(pr_int):
+                      focusnum.set(pr.index(str(max(pr_int))))
+                    elif switchPr > max(pr_int):
+                      focusnum.set(view)
           with open(path_pr, 'w', encoding='utf-8') as f:
             f.writelines('\n'.join(pr))
           with open(path_temp, 'w', encoding='utf-8') as f:
@@ -164,7 +165,7 @@ class Application(tkinter.Frame):
           with open(path_temp, 'w', encoding='utf-8') as f:
             f.write('')
           app.after(1000, Refresh)
-      app.after(1000, TempLoad)
+      app.after(3000, TempLoad)
 
     def PrReset():
       with open(path_pr, encoding='utf-8') as f:
