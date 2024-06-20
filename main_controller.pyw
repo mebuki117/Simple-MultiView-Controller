@@ -1,4 +1,4 @@
-# v0.9.0 pre1
+# v0.9.0 pre2
 
 import tkinter
 import tkinter.ttk as ttk
@@ -90,8 +90,7 @@ class Application(tkinter.Frame):
                       focusnum.set(pr.index(str(max(pr_int))))
                     elif switchPr > max(pr_int):
                       focusnum.set(view)
-            with open(path_pr, 'w', encoding='utf-8') as e:
-              e.writelines('\n'.join(pr))
+            e.writelines('\n'.join(pr))
           if autoSwitch:
             f.writelines(f'\n{focusnum.get()}')
           else:
