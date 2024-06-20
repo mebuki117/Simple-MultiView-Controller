@@ -165,7 +165,7 @@ class Application(tkinter.Frame):
           with open(path_temp, 'w', encoding='utf-8') as f:
             f.write('')
           app.after(1000, Refresh)
-      app.after(3000, TempLoad)
+      app.after(1000, TempLoad)
 
     def PrReset():
       with open(path_pr, encoding='utf-8') as f:
