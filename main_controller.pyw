@@ -1,8 +1,10 @@
-# v0.8.3
+# v0.9.0 pre1
 
 import tkinter
 import tkinter.ttk as ttk
 import os
+import requests
+import json
 
 root = tkinter.Tk()
 root.resizable(False, False)
@@ -21,6 +23,7 @@ autoSwitch = True  # auto scene switch
 # --- Advanced Options ---
 usePr = True  # ONLY TRUE IF USE PRIORITY
 switchPr = 4  # priority that automatically switches the scene. default priorities: -1=nodata, 0=no priority
+usePaceManAPI = False  # [beta feature] automatically reset the priority using PaceManAPI. for PaceCatcherBot (usePr must be true)
 
 # main
 class Application(tkinter.Frame):
@@ -67,7 +70,28 @@ class Application(tkinter.Frame):
             name_list[0], name_list[focusnum.get()] = name_list[focusnum.get()], name_list[0]
           f.writelines('\n'.join(name_list))
           if usePr:
-            e.writelines('\n'.join(pr))
+            if usePaceManAPI:
+              nickname_list = []
+              url = requests.get('https://paceman.gg/api/ars/liveruns')
+              data = json.loads(url.text)
+              for l in range(len(data)):
+                nickname_list.append(data[l]['nickname'])
+              print(f'nickname_list: {nickname_list}')
+              combobox_list = []
+              for l in range(view):
+                combobox_list.append(combobox[l].get())
+              for l in range(len(combobox_list)):
+                if combobox_list[l] not in nickname_list:
+                  if pr[l] != '-1':
+                    pr[l] = '0'
+                    pr_int[l] = 0
+                    radio[l].configure(text='0')
+                    if switchPr <= max(pr_int):
+                      focusnum.set(pr.index(str(max(pr_int))))
+                    elif switchPr > max(pr_int):
+                      focusnum.set(view)
+            with open(path_pr, 'w', encoding='utf-8') as e:
+              e.writelines('\n'.join(pr))
           if autoSwitch:
             f.writelines(f'\n{focusnum.get()}')
           else:
@@ -157,7 +181,7 @@ class Application(tkinter.Frame):
             var.set(view)
         with open(path_pr, 'w', encoding='utf-8') as f:
           f.writelines('\n'.join(pr))
-      app.after(100, PrReset)
+      app.after(500, PrReset)
 
     # get all names
     name = getallnames(path_allnames, path_dir)
