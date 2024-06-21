@@ -21,9 +21,9 @@ view = 6  # max views
 autoSwitch = True  # auto scene switch
 
 # --- Advanced Options ---
-usePr = False  # ONLY TRUE IF USE PRIORITY
+usePr = True  # ONLY TRUE IF USE PRIORITY
 switchPr = 4  # priority that automatically switches the scene. default priorities: -1=nodata, 0=no priority
-usePaceManAPI = False  # [beta feature] automatically reset the priority using PaceManAPI. for PaceCatcherBot (usePr must be true)
+usePaceManAPI = True  # [beta feature] automatically reset the priority using PaceManAPI. for PaceCatcherBot (usePr must be true)
 
 # main
 class Application(tkinter.Frame):
@@ -152,8 +152,8 @@ class Application(tkinter.Frame):
                       focusnum.set(pr.index(str(max(pr_int))))
                     elif switchPr > max(pr_int):
                       focusnum.set(view)
-          with open(path_pr, 'w', encoding='utf-8') as f:
-            f.writelines('\n'.join(pr))
+            with open(path_pr, 'w', encoding='utf-8') as f:
+              f.writelines('\n'.join(pr))
           with open(path_temp, 'w', encoding='utf-8') as f:
             f.write('')
           with open(path_names, 'w', encoding='utf-8') as f:
