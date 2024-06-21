@@ -21,9 +21,9 @@ view = 6  # max views
 autoSwitch = True  # auto scene switch
 
 # --- Advanced Options ---
-usePr = True  # ONLY TRUE IF USE PRIORITY
+usePr = False  # ONLY TRUE IF USE PRIORITY
 switchPr = 4  # priority that automatically switches the scene. default priorities: -1=nodata, 0=no priority
-usePaceManAPI = True  # [beta feature] automatically reset the priority using PaceManAPI. for PaceCatcherBot (usePr must be true)
+usePaceManAPI = False  # [beta feature] automatically reset the priority using PaceManAPI. for PaceCatcherBot (usePr must be true)
 
 # main
 class Application(tkinter.Frame):
