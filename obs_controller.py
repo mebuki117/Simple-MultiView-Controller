@@ -1,7 +1,7 @@
 import obspython as S
 import os
 
-version = '0.5.0'
+version = '0.9.0'
 
 # --- Options ---
 browser_format = 'Player '  # brower source format
@@ -47,19 +47,18 @@ def updateURL():
         pass
       with open(path, encoding='utf-8') as f:
         idname = f.read().splitlines()
+      name_text = S.obs_get_source_by_name(f'{name_text_format}{l+1}')
+      settings = S.obs_source_get_settings(name_text)
+      name = ''
       for n in range(len(idname)):
-        if f'{id[l]}' in idname[n]:
+        if f'{id[l]}' and f'{id[l]}' in idname[n]:
           split = idname[n].replace(' : ', '/')
           idname_list = split.split('/')
           name = idname_list[1]
-          name_text = S.obs_get_source_by_name(f'{name_text_format}{l+1}')
-          settings = S.obs_source_get_settings(name_text)
-          S.obs_data_set_string(settings, 'text', name)
-          S.obs_source_update(name_text, settings)
-          S.obs_source_release(name_text)
-          S.obs_data_release(settings)
-
-
+      S.obs_data_set_string(settings, 'text', name)
+      S.obs_source_update(name_text, settings)
+      S.obs_source_release(name_text)
+      S.obs_data_release(settings)
 
 def execute():
   try:
