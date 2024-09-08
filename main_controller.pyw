@@ -1,10 +1,8 @@
-# v0.9.0 pre3
+# v0.9.0
 
 import tkinter
 import tkinter.ttk as ttk
 import os
-import requests
-import json
 
 root = tkinter.Tk()
 root.resizable(False, False)
@@ -18,12 +16,11 @@ path_dir = f'{path_current}\\data'
 
 # --- Options ---
 view = 6  # max views
-autoSwitch = True  # auto scene switch
+autoSwitch = False  # auto scene switch
 
 # --- Advanced Options ---
 usePr = False  # ONLY TRUE IF USE PRIORITY
 switchPr = 4  # priority that automatically switches the scene. default priorities: -1=nodata, 0=no priority
-usePaceManAPI = False  # [beta feature] automatically reset the priority using PaceManAPI. for PaceCatcherBot (usePr must be true)
 
 # main
 class Application(tkinter.Frame):
@@ -111,7 +108,7 @@ class Application(tkinter.Frame):
               d = combobox_list.index(temp[0])
               name[d] = temp[0]
               radio[d].configure(text=temp[1])
-              pr[d] = f'{temp[1]}'
+              pr[d] = temp[1]
               pr_int[d] = int(temp[1])
               if switchPr <= max(pr_int) <= int(temp[1]):
                 focusnum.set(d)
@@ -125,7 +122,7 @@ class Application(tkinter.Frame):
               combobox[d].set(temp[0])
               combobox_list[d] = temp[0]
               radio[d].configure(text=temp[1])
-              pr[d] = f'{temp[1]}'
+              pr[d] = temp[1]
               pr_int[d] = int(temp[1])
               if switchPr <= int(temp[1]):
                 focusnum.set(d)
@@ -134,24 +131,6 @@ class Application(tkinter.Frame):
               else:
                 focusnum.set(view)
           if usePr:
-            if usePaceManAPI:
-              nickname_list = []
-              url = requests.get('https://paceman.gg/api/ars/liveruns')
-              data = json.loads(url.text)
-              for l in range(len(data)):
-                nickname_list.append(data[l]['nickname'])
-              print(f'nickname_list: {nickname_list}')
-              for l in range(len(combobox_list)):
-                if combobox_list[l] not in nickname_list:
-                  print(f'not in nickname list: {combobox_list[l]}')
-                  if pr[l] != '-1':
-                    pr[l] = '0'
-                    pr_int[l] = 0
-                    radio[l].configure(text='0')
-                    if switchPr <= max(pr_int):
-                      focusnum.set(pr.index(str(max(pr_int))))
-                    elif switchPr > max(pr_int):
-                      focusnum.set(view)
             with open(path_pr, 'w', encoding='utf-8') as f:
               f.writelines('\n'.join(pr))
           with open(path_temp, 'w', encoding='utf-8') as f:
