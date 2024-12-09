@@ -1,4 +1,4 @@
-# v0.9.0
+# v0.10.0
 
 import tkinter
 import tkinter.ttk as ttk
@@ -14,12 +14,14 @@ path_pr = f'{path_current}\\data\\priority.txt'
 path_temp = f'{path_current}\\data\\temp.txt'
 path_dir = f'{path_current}\\data'
 
+ni = 0
+
 # --- Options ---
 view = 6  # max views
-autoSwitch = False  # auto scene switch
+autoSwitch = True  # auto scene switch
 
 # --- Advanced Options ---
-usePr = False  # ONLY TRUE IF USE PRIORITY
+usePr = True  # ONLY TRUE IF USE PRIORITY
 switchPr = 4  # priority that automatically switches the scene. default priorities: -1=nodata, 0=no priority
 
 # main
@@ -81,6 +83,7 @@ class Application(tkinter.Frame):
         f.writelines('\n'*len(combobox)+'-1')
 
     def TempLoad():
+      global ni
       with open(path_names, encoding='utf-8') as f:
         name = f.read().splitlines()
         dummy = name.pop()
@@ -117,15 +120,15 @@ class Application(tkinter.Frame):
               else:
                 focusnum.set(view)
             else:
-              d = pr.index(str(pr_min))
-              name[d] = temp[0]
-              combobox[d].set(temp[0])
-              combobox_list[d] = temp[0]
-              radio[d].configure(text=temp[1])
-              pr[d] = temp[1]
-              pr_int[d] = int(temp[1])
+              ni = find_next_min_index(pr, ni+1)
+              name[ni] = temp[0]
+              combobox[ni].set(temp[0])
+              combobox_list[ni] = temp[0]
+              radio[ni].configure(text=temp[1])
+              pr[ni] = temp[1]
+              pr_int[ni] = int(temp[1])
               if switchPr <= int(temp[1]):
-                focusnum.set(d)
+                focusnum.set(ni)
               elif switchPr <= max(pr_int):
                 focusnum.set(pr.index(str(max(pr_int))))
               else:
@@ -161,6 +164,12 @@ class Application(tkinter.Frame):
         with open(path_pr, 'w', encoding='utf-8') as f:
           f.writelines('\n'.join(pr))
       app.after(500, PrReset)
+
+    def find_next_min_index(pr, start_index):
+      pr_rotated = pr[start_index:] + pr[:start_index]
+      pr_min = min(pr_rotated)
+      relative_index = pr_rotated.index(pr_min)
+      return (start_index + relative_index) % len(pr)
 
     # get all names
     name = getallnames(path_allnames, path_dir)
