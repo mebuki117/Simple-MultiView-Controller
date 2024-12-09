@@ -18,10 +18,10 @@ ni = 0
 
 # --- Options ---
 view = 6  # max views
-autoSwitch = True  # auto scene switch
+autoSwitch = False  # auto scene switch
 
 # --- Advanced Options ---
-usePr = True  # ONLY TRUE IF USE PRIORITY
+usePr = False  # ONLY TRUE IF USE PRIORITY
 switchPr = 4  # priority that automatically switches the scene. default priorities: -1=nodata, 0=no priority
 
 # main
