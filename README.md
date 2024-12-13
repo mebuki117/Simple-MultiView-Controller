@@ -7,7 +7,7 @@ OBSでTwitch/YouTube配信をミラーするためのコントローラー。
 3. OBSのスクリプトに、`obs_controller.py`を追加
 4. `\data\allnames.txt`に、`名前 : 配信URL`を行ごとに追加
 5. `main_controller.pyw`を起動
-6. プレイヤーのコンボボックスから、TwitchIDを選択
+6. プレイヤーのコンボボックスから、配信を選択
 7. `Refresh`をクリック
 
 ### フォーカス
