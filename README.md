@@ -5,7 +5,7 @@ OBSでTwitch/YouTube配信をミラーするためのコントローラー。
 1. autoswitchを有効にする場合は、OBSで`Normal`と、`Focus`という名前のシーンを作成
 2. 作成したシーンに、`Player N`という名前のブラウザソースを作成（`N`は、1から順に必要数作成）
 3. OBSのスクリプトに、`obs_controller.py`を追加
-4. `\data\allnames.txt`に、配信URLを行ごとに追加
+4. `\data\allnames.txt`に、`名前 : 配信URL`を行ごとに追加
 5. `main_controller.pyw`を起動
 6. プレイヤーのコンボボックスから、TwitchIDを選択
 7. `Refresh`をクリック
