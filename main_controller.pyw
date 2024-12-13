@@ -1,4 +1,4 @@
-# v0.10.0
+# v0.11.0
 
 import tkinter
 import tkinter.ttk as ttk
@@ -46,6 +46,18 @@ class Application(tkinter.Frame):
         name = f.read().splitlines()
         name.insert(0, '')
       return name
+    
+
+    def split_urls(name_list: list) -> list:
+      urls = []
+      for item in name_list:
+        if item.strip() == '':
+          urls.append('')
+        else:
+          parts = item.split(' : ')
+          if len(parts) == 2:
+            urls.append(parts[1].strip())
+      return urls
 
     def Refresh():
       name_list = []
@@ -67,7 +79,7 @@ class Application(tkinter.Frame):
                 radio[l].configure(text='0')
           if focusnum.get() < len(combobox):
             name_list[0], name_list[focusnum.get()] = name_list[focusnum.get()], name_list[0]
-          f.writelines('\n'.join(name_list))
+          f.writelines('\n'.join(split_urls(name_list)))
           if usePr:
             e.writelines('\n'.join(pr))
           if autoSwitch:

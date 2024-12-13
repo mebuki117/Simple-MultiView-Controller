@@ -1,7 +1,8 @@
 import obspython as S
 import os
+import re
 
-version = '0.9.0'
+version = '0.10.0'
 
 # --- Options ---
 browser_format = 'Player '  # brower source format
@@ -19,7 +20,7 @@ def updateURL():
   for l in range(len(id)-1):
     browser_source = S.obs_get_source_by_name(f'{browser_format}{l+1}')
     settings = S.obs_source_get_settings(browser_source)
-    url = f'https://player.twitch.tv/?channel={id[l]}&enableExtensions=true&muted=true&parent=twitch.tv&player=popout&quality=chunked&volume=0.01'
+    url = generate_embed_url(id[l])
     if id[l] == '':
       url = ''
     S.obs_data_set_string(settings, 'url', url)
@@ -52,13 +53,31 @@ def updateURL():
       name = ''
       for n in range(len(idname)):
         if f'{id[l]}' and f'{id[l]}' in idname[n]:
-          split = idname[n].replace(' : ', '/')
-          idname_list = split.split('/')
-          name = idname_list[1]
+          split = idname[n].replace(' : ', ';')
+          idname_list = split.split(';')
+          name = idname_list[0]
       S.obs_data_set_string(settings, 'text', name)
       S.obs_source_update(name_text, settings)
       S.obs_source_release(name_text)
       S.obs_data_release(settings)
+
+def generate_embed_url(url: str) -> str:
+  youtube_pattern = r'https?://(?:www\.)?youtube\.com/watch\?v=([a-zA-Z0-9_-]+)'
+  twitch_pattern = r'https?://(?:www\.)?twitch\.tv/([a-zA-Z0-9_-]+)'
+
+  youtube_match = re.match(youtube_pattern, url)
+  twitch_match = re.match(twitch_pattern, url)
+
+  if youtube_match:
+    video_id = youtube_match.group(1)
+    print(video_id)
+    return f'https://www.youtube.com/embed/{video_id}?autoplay=1&controls=0&rel=0&modestbranding=1&mute=1'
+  elif twitch_match:
+    channel_id = twitch_match.group(1)
+    return f'https://player.twitch.tv/?channel={channel_id}&enableExtensions=true&muted=true&parent=twitch.tv&player=popout&quality=chunked&volume=0.01'
+  else:
+    print('Invalid URL. Please provide a valid YouTube or Twitch link.')
+    return ''
 
 def execute():
   try:
